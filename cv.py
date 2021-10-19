@@ -1,4 +1,4 @@
-#after (what i did) installing OpenCV with cmd (pip install opencv-contrib-python)  or through opencv's github page (https://github.com/opencv/opencv/releases)
+#after (what i did) installing OpenCV with cmd (pip install opencv-python)  or through opencv's github page (https://github.com/opencv/opencv/releases)
 import cv2 as cv
 
 
