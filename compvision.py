@@ -1,5 +1,5 @@
 # after (what i did) installing OpenCV with cmd (pip install opencv-python)  or through opencv's github page (https://github.com/opencv/opencv/releases)
-import cv2 as cv
+from cv2 import cv2 as cv
 import numpy as np
 # pyautogui needs a pip install, provides keyboard and mouse automation (use in our ai agent?)
 import pyautogui
