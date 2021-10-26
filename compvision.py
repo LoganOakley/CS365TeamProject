@@ -26,9 +26,11 @@ mask1 = cv.inRange(hsv, (36, 0, 0), (70, 255,255))
 mask2 = cv.inRange(hsv, (15,0,0), (36, 255, 255))
 
 
+
 pacman = cv.inRange(hsv, (17,0,0), (17, 255, 255))
 ghostsAndDots = cv.inRange(hsv, (43, 0, 0), (43, 255,255))
 score =  cv.inRange(hsv, (64, 0, 0), (64, 255,255))
+
 ## final mask and masked
 mask = cv.bitwise_or(mask1, mask2)
 target = cv.bitwise_and(hsv,hsv, mask=mask)
