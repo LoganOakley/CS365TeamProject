@@ -10,7 +10,28 @@ import win32con as wc  # pip install pywin32
 
 import ctypes  # allows GetSystemMetrics
 import re
-import threading
+import multiprocessing
+from datetime import datetime
+import time
+
+# should allow us to grab framerate
+
+
+class Counter:
+    def __init__(self):
+        self.start_time = None
+        self.occurrence_count = 0
+
+    def start(self):
+        self.start_time = datetime.now()
+        return self
+
+    def increment(self):
+        self.occurrence_count += 1
+
+    def countPerSec(self):
+        time_elapsed = (datetime.now() - self.start_time).total_seconds()
+        return round(self.occurrence_count / time_elapsed, 2)
 
 
 class WindowCapture:
@@ -45,16 +66,31 @@ def process_img(original_image):
     return processed_img
 
 
-while(True):
-    mainwin = WindowCapture()
-    #screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
-    screen = np.array(ImageGrab.grab(
-        bbox=(mainwin.rect[0], mainwin.rect[1], mainwin.rect[2], mainwin.rect[3])))
-    new_screen = process_img(screen)
-    #printscreen_numpy = cv2.cvtColor(screen,cv2.COLOR_BGR2RGB)
-    cv2.imshow('window', new_screen)
-    if cv2.waitKey(25) & 0xFF == ord('q'):
+def displaywindow():
+    myCounter = Counter()
+    myCounter.start()
+    while(True):
 
-        cv2.destroyAllWindows()
+        mainwin = WindowCapture()
+        #screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
+        screen = np.array(ImageGrab.grab(
+            bbox=(mainwin.rect[0], mainwin.rect[1], mainwin.rect[2], mainwin.rect[3])))
+        new_screen = process_img(screen)
+        #printscreen_numpy = cv2.cvtColor(screen,cv2.COLOR_BGR2RGB)
+        cv2.imshow('window', new_screen)
+        if cv2.waitKey(25) & 0xFF == ord('q'):
 
-        break
+            cv2.destroyAllWindows()
+
+            break
+        print(myCounter.countPerSec())
+        myCounter.increment()
+
+
+t1 = multiprocessing.Process(target=displaywindow())
+t2 = multiprocessing.Process(target=displaywindow())
+t3 = multiprocessing.Process(target=displaywindow())
+
+t1.start()
+t2.start()
+t3.start()
