@@ -1,20 +1,11 @@
-import numpy as np
-
-from PIL import ImageGrab
-
 import cv2
-
-import win32gui as wg
-import win32ui as wu
-import win32con as wc  # pip install pywin32
-
+import numpy as np
+import win32gui
+import win32ui
+import win32con   # pip install pywin32
 import ctypes  # allows GetSystemMetrics
-import re
-import multiprocessing
 from datetime import datetime
 import time
-
-# should allow us to grab framerate
 
 
 class Counter:
@@ -34,63 +25,66 @@ class Counter:
         return round(self.occurrence_count / time_elapsed, 2)
 
 
-class WindowCapture:
+class NewWindowCapture:
+    windowhandle = None
+    width = 0
+    height = 0
+    # change
+    cropped_x = 0
+    cropped_y = 0
+    offset_x = 0
+    offset_y = 0
 
-    # getting user's desktop size to properly calculate game window
+    # constructor
+    def __init__(self, window):
+        self.windowhandle = win32gui.FindWindow(None, window)
+        if not self.windowhandle:
+            raise Exception(f'Window does not exist: {format(window)}')
 
-    user = ctypes.windll.user32
+        window_size = win32gui.GetWindowRect(self.windowhandle)
+        self.width = window_size[2] - window_size[0]
+        self.height = window_size[3] - window_size[1]
 
-    w = user.GetSystemMetrics(0)
+        # cut out titlebar
+        border_pixels = 8
+        titlebar_pixels = 30
+        self.width = self.width - (border_pixels * 2)
+        self.height = self.height - titlebar_pixels - border_pixels
+        self.cropped_x = border_pixels
+        self.cropped_y = titlebar_pixels
 
-    h = user.GetSystemMetrics(1)
+        self.offset_x = window_size[0] + self.cropped_x
+        self.offset_y = window_size[1] + self.cropped_y
 
-    print(f"Width is {w}")  # for testing
+    def grab_screenshot(self):
 
-    print(f"Height is {h}")  # for testing
+        windowDeviceContext = win32gui.GetWindowDC(self.windowhandle)
+        createdDeviceContext = win32ui.CreateDCFromHandle(windowDeviceContext)
+        compatibleContext = createdDeviceContext.CreateCompatibleDC()
+        bmpData = win32ui.CreateBitmap()
+        bmpData.CreateCompatibleBitmap(
+            createdDeviceContext, self.width, self.height)
+        compatibleContext.SelectObject(bmpData)
+        compatibleContext.BitBlt((0, 0), (self.width, self.height), createdDeviceContext,
+                                 (self.cropped_x, self.cropped_y), win32con.SRCCOPY)
 
-    # Detects Stella Window, perhaps we can define rom file names and pass those as variables with Stella 6.5.3 + whatever game rom
+        signedArray = bmpData.GetBitmapBits(True)
+        img = np.fromstring(signedArray, dtype='uint8')
+        img.shape = (self.height, self.width, 4)
 
-    wind = wg.FindWindow(None, 'Stella 6.5.3')
+        createdDeviceContext.DeleteDC()
+        compatibleContext.DeleteDC()
+        win32gui.ReleaseDC(self.windowhandle, windowDeviceContext)
+        win32gui.DeleteObject(bmpData.GetHandle())
 
-    # analyze window
+        # drop the alpha channel, or cv2.matchTemplate() will throw an error like:
+        #   error: (-215:Assertion failed) (depth == cv2_8U || depth == cv2_32F) && type == _templ.type()
+        #   && _img.dims() <= 2 in function 'cv2::matchTemplate'
+        img = img[..., :3]
+        processed_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        processed_img = cv2.Canny(processed_img, threshold1=50, threshold2=100)
+        processed_img = np.ascontiguousarray(processed_img)
+        return processed_img
 
-    rect = wg.GetWindowRect(wind)
-
-
-def process_img(original_image):
-
-    processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-
-    processed_img = cv2.Canny(processed_img, threshold1=50, threshold2=100)
-
-    return processed_img
-
-
-def displaywindow():
-    myCounter = Counter()
-    myCounter.start()
-    while(True):
-
-        mainwin = WindowCapture()
-        #screen = np.array(ImageGrab.grab(bbox=(0, 40, 800, 640)))
-        screen = np.array(ImageGrab.grab(
-            bbox=(mainwin.rect[0], mainwin.rect[1], mainwin.rect[2], mainwin.rect[3])))
-        new_screen = process_img(screen)
-        #printscreen_numpy = cv2.cvtColor(screen,cv2.COLOR_BGR2RGB)
-        cv2.imshow('window', new_screen)
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-
-            cv2.destroyAllWindows()
-
-            break
-        print(myCounter.countPerSec())
-        myCounter.increment()
-
-
-t1 = multiprocessing.Process(target=displaywindow())
-t2 = multiprocessing.Process(target=displaywindow())
-t3 = multiprocessing.Process(target=displaywindow())
-
-t1.start()
-t2.start()
-t3.start()
+    def get_screen_position(self, pos):
+        return (pos[0] + self.offset_x, pos[1] + self.offset_y)
