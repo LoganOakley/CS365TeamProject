@@ -6,6 +6,7 @@ import win32con   # pip install pywin32
 import ctypes  # allows GetSystemMetrics
 from datetime import datetime
 import time
+from ImageProcessing import *
 
 
 class Counter:
@@ -34,7 +35,10 @@ class NewWindowCapture:
     cropped_y = 0
     offset_x = 0
     offset_y = 0
+    #stores a function that does the desired processing. 
+    processing_type = None
 
+    
     # constructor
     def __init__(self, window):
         self.windowhandle = win32gui.FindWindow(None, window)
@@ -62,8 +66,7 @@ class NewWindowCapture:
         createdDeviceContext = win32ui.CreateDCFromHandle(windowDeviceContext)
         compatibleContext = createdDeviceContext.CreateCompatibleDC()
         bmpData = win32ui.CreateBitmap()
-        bmpData.CreateCompatibleBitmap(
-            createdDeviceContext, self.width, self.height)
+        bmpData.CreateCompatibleBitmap(createdDeviceContext, self.width, self.height)
         compatibleContext.SelectObject(bmpData)
         compatibleContext.BitBlt((0, 0), (self.width, self.height), createdDeviceContext,
                                  (self.cropped_x, self.cropped_y), win32con.SRCCOPY)
@@ -81,10 +84,12 @@ class NewWindowCapture:
         #   error: (-215:Assertion failed) (depth == cv2_8U || depth == cv2_32F) && type == _templ.type()
         #   && _img.dims() <= 2 in function 'cv2::matchTemplate'
         img = img[..., :3]
-        processed_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        processed_img = cv2.Canny(processed_img, threshold1=50, threshold2=100)
-        processed_img = np.ascontiguousarray(processed_img)
-        return processed_img
+        self.processing_type = detectEdges
+        return self.process_image(img)
+
+    #create psuedo delegate so that we can change the processing being performed by changing the attr processing_type
+    def process_image(self, img):
+        return self.processing_type(img)
 
     def get_screen_position(self, pos):
         return (pos[0] + self.offset_x, pos[1] + self.offset_y)

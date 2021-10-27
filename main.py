@@ -11,16 +11,7 @@ import ctypes  # allows GetSystemMetrics
 
 
 def main():
-
-    def process_img(original_image):
-
-        processed_img = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-
-        processed_img = cv2.Canny(processed_img, threshold1=50, threshold2=100)
-
-        return processed_img
-
-    wincap = NewWindowCapture('Stella 6.5.3: "Asteroids (1981) (Atari)"')
+    wincap = NewWindowCapture('Stella 6.5.3: "Centipede (1983) (Atari)"')
 
     myCounter = Counter()
     myCounter.start()
