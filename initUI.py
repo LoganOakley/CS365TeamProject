@@ -28,7 +28,7 @@ def romSearch(conf):
     count = 0
     filearray = []
     for file in os.listdir(conf):
-        if file.endswith(".A26"):
+        if file.endswith(".A26") or file.endswith(".bin"):
             gamename = file.split('.')
             filearray.append(gamename[0])
     return filearray

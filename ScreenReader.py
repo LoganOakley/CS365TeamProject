@@ -36,7 +36,7 @@ class NewWindowCapture:
     offset_x = 0
     offset_y = 0
     #stores a function that does the desired processing. 
-    processing_type = None
+    processing_type = detectEdges
 
     
     # constructor
@@ -84,7 +84,7 @@ class NewWindowCapture:
         #   error: (-215:Assertion failed) (depth == cv2_8U || depth == cv2_32F) && type == _templ.type()
         #   && _img.dims() <= 2 in function 'cv2::matchTemplate'
         img = img[..., :3]
-        self.processing_type = detectEdges
+        
         return self.process_image(img)
 
     #create psuedo delegate so that we can change the processing being performed by changing the attr processing_type
@@ -93,3 +93,5 @@ class NewWindowCapture:
 
     def get_screen_position(self, pos):
         return (pos[0] + self.offset_x, pos[1] + self.offset_y)
+    def change_processing(self,process):
+        self.processing_type=process

@@ -1,5 +1,6 @@
 from ScreenReader import NewWindowCapture, Counter
 import numpy as np
+from ImageProcessing import *
 import cv2
 import os
 from datetime import datetime
@@ -12,7 +13,7 @@ import ctypes  # allows GetSystemMetrics
 
 def main():
     wincap = NewWindowCapture('Stella 6.5.3: "Centipede (1983) (Atari)"')
-
+    wincap.change_processing(filterPurple)
     myCounter = Counter()
     myCounter.start()
     while(True):
