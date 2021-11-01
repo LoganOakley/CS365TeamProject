@@ -65,13 +65,16 @@ lb.pack(side=LEFT)
 
 def playButton(listbox):
     # no logic yet
-    print("no logic yet")
-
+    print("no play logic yet")
+def quit():
+    print("no quit logic yet")
 
 # create BUTTON
-playbutton = Button(root, text='Play', command=playButton(
-    lb), font=("Helvetica", 18, "bold"))
+playbutton = Button(root, text='Play', font=("Helvetica", 18, "bold"))
 playbutton.pack(side=RIGHT)
+playbutton['command'] = lambda arg1= lb : playButton(lb) #used lambda to properly call commands with arguments on click
+quitbutton = Button(root, text = 'Quit',command = quit,font =("helvetica",18,"bold"))
+quitbutton.pack(side = RIGHT)
 
 
 #

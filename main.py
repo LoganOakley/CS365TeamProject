@@ -13,7 +13,7 @@ import ctypes  # allows GetSystemMetrics
 
 def main():
     wincap = NewWindowCapture('Stella 6.5.3: "Centipede (1983) (Atari)"')
-    wincap.change_processing(filterPurple)
+    wincap.change_processing(detectEdges)
     myCounter = Counter()
     myCounter.start()
     while(True):
