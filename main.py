@@ -12,22 +12,31 @@ import ctypes  # allows GetSystemMetrics
 
 
 def main():
-    wincap = NewWindowCapture('Stella 6.5.3: "Centipede (1983) (Atari)"')
-    wincap.change_processing(detectEdges)
-    myCounter = Counter()
-    myCounter.start()
-    while(True):
-        screenshot = wincap.grab_screenshot()
-        cv2.imshow('Computer Vision', screenshot)
 
-        print(myCounter.countPerSec())
-        myCounter.increment()
+    passinto = ''
 
-        if cv2.waitKey(1) == ord('q'):
-            cv2.destroyAllWindows()
-            break
+    def FindWindowEnum(hwnd, ctx):
+        windowstring = win32gui.GetWindowText(hwnd)
+        if 'Stella' in windowstring:
+            wincap = NewWindowCapture(windowstring)
+            wincap.change_processing(detectEdges)
+            myCounter = Counter()
+            myCounter.start()
+            while(True):
+                screenshot = wincap.grab_screenshot()
+                cv2.imshow('Computer Vision', screenshot)
 
-    print('Finished')
+                print(myCounter.countPerSec())
+                myCounter.increment()
+
+                if cv2.waitKey(1) == ord('q'):
+                    cv2.destroyAllWindows()
+                    break
+
+            print('Finished')
+
+    findwindow = win32gui.EnumWindows(FindWindowEnum, None)
+    # Goes through all windows and does the loop when the window name contains our chosen string
 
 
 if __name__ == "__main__":

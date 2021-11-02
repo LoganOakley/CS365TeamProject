@@ -41,6 +41,13 @@ class NewWindowCapture:
     
     # constructor
     def __init__(self, window):
+        
+        #def winEnumHandler(hwnd, ctx, name):
+         #   if name in win32gui.GetWindowText(hwnd):
+         #       print('found window')
+         #       wincap = NewWindowCapture(win32gui.GetWindowText(hwnd))
+    
+        #win32gui.EnumWindows(winEnumHandler, None, partialname)
         self.windowhandle = win32gui.FindWindow(None, window)
         if not self.windowhandle:
             raise Exception(f'Window does not exist: {format(window)}')
