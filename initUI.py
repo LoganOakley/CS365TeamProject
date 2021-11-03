@@ -3,6 +3,7 @@ from tkinter import filedialog
 import configparser
 import ctypes
 import os
+import main
 
 # setting tkinter main window size
 winwidth = 500
@@ -27,6 +28,7 @@ root.geometry(f'{winwidth}x{winheight}+{w}+{h}')
 def romSearch(conf):
     count = 0
     filearray = []
+
     for file in os.listdir(conf):
         if file.endswith(".A26") or file.endswith(".bin"):
             gamename = file.split('.')
@@ -41,12 +43,18 @@ def romList():
     config = configparser.ConfigParser(allow_no_value=True)
     config.read('config/config.ini')
     if config['SETTINGS']['RomDirectory'] != '':
-        roms = romSearch(config['SETTINGS']['ROMDirectory'])
-        l.config(height=len(roms))
-        i = 0
-        while i < len(roms):
-            l.insert(i, roms[i])
-            i += 1
+        try:
+            roms = romSearch(config['SETTINGS']['ROMDirectory'])
+            l.config(height=len(roms))
+            i = 0
+            while i < len(roms):
+                l.insert(i, roms[i])
+                i += 1
+        except:
+            config.set('SETTINGS', 'RomDirectory', '')
+            with open('config/config.ini', 'w') as configfile:
+                config.write(configfile)
+            romList()
     else:
         romfolder = filedialog.askdirectory(title='Please Select a ROM folder')
         config.set('SETTINGS', 'RomDirectory', romfolder)
@@ -65,7 +73,12 @@ lb.pack(side=LEFT)
 
 def playButton(listbox):
     # no logic yet
-    print("no play logic yet")
+    try:
+        fileName = lb.get(ACTIVE)
+        os.system("stella.exe " + fileName)
+        main.main()
+    except:
+        print("nope")
 def quit():
     print("no quit logic yet")
 
