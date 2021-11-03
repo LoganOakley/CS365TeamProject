@@ -4,7 +4,8 @@ import configparser
 import ctypes
 import os
 import main
-import subprocess
+from multiprocessing import Process
+from subprocess import Popen
 import time
 
 # setting tkinter main window size
@@ -104,27 +105,39 @@ lb.pack(side=LEFT)
 
 
 def playButton(listbox):
+    p = None;
     config = configparser.ConfigParser(allow_no_value=True)
     config.read('config/config.ini')
 
     romFolder = config['SETTINGS']['romdirectory']
     programFolder = config['SETTINGS']['stelladirectory']
+    fileNameA26 = "/" + lb.get(ACTIVE) + ".A26"
+    fileNameBin = "/" + lb.get(ACTIVE) + ".bin"
+    romStringA26 = f'"{romFolder}/{lb.get(ACTIVE)}.A26"'
+    romStringBin = f'"{romFolder}/{lb.get(ACTIVE)}.bin"'
+    programFolder = f'"{programFolder}"'
 
     # no logic yet
 
-    fileNameA26 = "/" + lb.get(ACTIVE) + ".A26"
-    fileNameBin = "/" + lb.get(ACTIVE) + ".bin"
+    
     print(f'"{programFolder}" "{romFolder + fileNameA26}"-checking')
 
     try: 
-        #subprocess.check_call([f"{programFolder}", f"{romFolder}/{fileNameA26}"])
-        os.system(f'"{programFolder}" "{romFolder + fileNameA26}"')
+        
+        #p = Popen(f'"{programFolder} {romStringA26}"', shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+        p = os.system(f'"{programFolder} {romStringA26}"')
     except:
             
-        #subprocess.check_call([f"{programFolder}", f"{romFolder}/{fileNameBin}"])
-        os.system(f'"{programFolder}" "{romFolder + fileNameBin}"')
+        #p = Popen(f'"{programFolder} {romStringBin}"', shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+        p = os.system(f'"{programFolder} {romStringBin}"')
+
+    #global mainmethodProcess
+    #mainmethodProcess = Process(target=main.main())
+    #mainmethodProcess.start()
+
     time.sleep(3)
     main.main()
+
 
 def quit():
     print("no quit logic yet")
