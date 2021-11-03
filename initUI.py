@@ -4,6 +4,8 @@ import configparser
 import ctypes
 import os
 import main
+import subprocess
+import time
 
 # setting tkinter main window size
 winwidth = 500
@@ -25,6 +27,27 @@ root.geometry(f'{winwidth}x{winheight}+{w}+{h}')
 # used by romlist()
 
 
+
+
+def programSearch():
+    config = configparser.ConfigParser(allow_no_value=True)
+    if not os.path.exists('config/config.ini'):
+        config['SETTINGS'] = {'stelladirectory': '', 'romdirectory': ''}
+        with open('config/config.ini', 'w') as configfile:
+            config.write(configfile)
+    config.read('config/config.ini')
+    if not config['SETTINGS']['stelladirectory'].endswith('Stella.exe'):
+        stelladirectory = filedialog.askdirectory(title='Please locate your Stella directory')
+        config.set('SETTINGS', 'stelladirectory', stelladirectory + '/Stella.exe')
+        with open('config/config.ini', 'w') as configfile:
+            config.write(configfile)
+        programSearch()
+
+
+
+
+    
+
 def romSearch(conf):
     count = 0
     filearray = []
@@ -42,7 +65,7 @@ def romList():
     l = Listbox(root)
     config = configparser.ConfigParser(allow_no_value=True)
     config.read('config/config.ini')
-    if config['SETTINGS']['RomDirectory'] != '':
+    if config['SETTINGS']['romdirectory'] != '':
         try:
             roms = romSearch(config['SETTINGS']['ROMDirectory'])
             l.config(height=len(roms))
@@ -51,19 +74,28 @@ def romList():
                 l.insert(i, roms[i])
                 i += 1
         except:
-            config.set('SETTINGS', 'RomDirectory', '')
+            config.set('SETTINGS', 'romdirectory', '')
             with open('config/config.ini', 'w') as configfile:
                 config.write(configfile)
             romList()
     else:
         romfolder = filedialog.askdirectory(title='Please Select a ROM folder')
-        config.set('SETTINGS', 'RomDirectory', romfolder)
+        config.set('SETTINGS', 'romdirectory', romfolder)
         with open('config/config.ini', 'w') as configfile:
             config.write(configfile)
         romList()
+        try:
+            roms = romSearch(config['SETTINGS']['ROMDirectory'])
+            l.config(height=len(roms))
+            i = 0
+            while i < len(roms):
+                l.insert(i, roms[i])
+                i += 1
+        except:
+            romList()
     return l
 
-
+programSearch()
 # create ROM list box
 lb = romList()
 lb.pack(side=LEFT)
@@ -72,13 +104,28 @@ lb.pack(side=LEFT)
 
 
 def playButton(listbox):
+    config = configparser.ConfigParser(allow_no_value=True)
+    config.read('config/config.ini')
+
+    romFolder = config['SETTINGS']['romdirectory']
+    programFolder = config['SETTINGS']['stelladirectory']
+
     # no logic yet
-    try:
-        fileName = lb.get(ACTIVE)
-        os.system("stella.exe " + fileName)
-        main.main()
+
+    fileNameA26 = "/" + lb.get(ACTIVE) + ".A26"
+    fileNameBin = "/" + lb.get(ACTIVE) + ".bin"
+    print(f'"{programFolder}" "{romFolder + fileNameA26}"-checking')
+
+    try: 
+        #subprocess.check_call([f"{programFolder}", f"{romFolder}/{fileNameA26}"])
+        os.system(f'"{programFolder}" "{romFolder + fileNameA26}"')
     except:
-        print("nope")
+            
+        #subprocess.check_call([f"{programFolder}", f"{romFolder}/{fileNameBin}"])
+        os.system(f'"{programFolder}" "{romFolder + fileNameBin}"')
+    time.sleep(3)
+    main.main()
+
 def quit():
     print("no quit logic yet")
 
