@@ -5,8 +5,9 @@ import ctypes
 import os
 import main
 from multiprocessing import Process
-from subprocess import Popen
+from subprocess import *
 import time
+from threading import Thread
 
 # setting tkinter main window size
 winwidth = 500
@@ -121,21 +122,26 @@ def playButton(listbox):
 
     
     print(f'"{programFolder}" "{romFolder + fileNameA26}"-checking')
-
+    osThread = None
     try: 
         
         #p = Popen(f'"{programFolder} {romStringA26}"', shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
-        p = os.system(f'"{programFolder} {romStringA26}"')
+        #os.system(f'"{programFolder} {romStringA26}"')
+        p = Popen(f"{programFolder} {romStringA26}", shell=True)
+
     except:
             
         #p = Popen(f'"{programFolder} {romStringBin}"', shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
-        p = os.system(f'"{programFolder} {romStringBin}"')
+        #p = os.system(f'"{programFolder} {romStringBin}"')
+        p = Popen(f'"{programFolder} {romStringBin}"', shell=True)
+
 
     #global mainmethodProcess
     #mainmethodProcess = Process(target=main.main())
     #mainmethodProcess.start()
 
     time.sleep(3)
+    
     main.main()
 
 
