@@ -142,7 +142,8 @@ def playButton(listbox):
 
     time.sleep(3)
     
-    main.main()
+    #gets the active selected game title, so we can call required functions.
+    main.main(lb.get(ACTIVE))
 
 
 def quit():

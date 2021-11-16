@@ -36,7 +36,7 @@ class NewWindowCapture:
     offset_x = 0
     offset_y = 0
     #stores a function that does the desired processing. 
-    processing_type = detectEdges
+    processing_type = None;
 
     
     # constructor
@@ -66,6 +66,7 @@ class NewWindowCapture:
 
         self.offset_x = window_size[0] + self.cropped_x
         self.offset_y = window_size[1] + self.cropped_y
+        self.processing_type = regularGrayscale
 
     def grab_screenshot(self):
 

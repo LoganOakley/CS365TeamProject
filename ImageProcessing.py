@@ -13,3 +13,7 @@ def filterPurple(img):
         purple_upper_bound = np.array([360,255,255])
         processed_img = cv2.inRange(processed_img,purple_lower_bound,purple_upper_bound)
         return processed_img
+
+def regularGrayscale(img):
+        processed_img = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), cv2.cvtColor(img, cv2.COLOR_BGR2RGB)]
+        return processed_img[0]

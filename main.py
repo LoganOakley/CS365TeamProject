@@ -9,21 +9,23 @@ import win32gui
 import win32ui
 import win32con  # pip install pywin32
 import ctypes  # allows GetSystemMetrics
+from game import *
 
 
-def main():
+def main(gamename):
 
-    passinto = ''
+    game = gamename;
 
     def FindWindowEnum(hwnd, ctx):
         windowstring = win32gui.GetWindowText(hwnd)
         if 'Stella' in windowstring:
             wincap = NewWindowCapture(windowstring)
-            wincap.change_processing(detectEdges)
+            wincap.change_processing(regularGrayscale)
             myCounter = Counter()
             myCounter.start()
             while(True):
                 screenshot = wincap.grab_screenshot()
+                
                 cv2.imshow('Computer Vision', screenshot)
 
                 print(myCounter.countPerSec())
