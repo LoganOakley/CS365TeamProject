@@ -8,6 +8,7 @@ from multiprocessing import Process
 from subprocess import *
 import time
 from threading import Thread
+from ImageProcessing import *
 
 # setting tkinter main window size
 winwidth = 500

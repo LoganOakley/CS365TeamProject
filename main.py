@@ -12,7 +12,7 @@ import ctypes  # allows GetSystemMetrics
 from game import *
 
 
-def main(gamename):
+def main(gamename = 'No Name'):
 
     game = gamename;
 
@@ -20,7 +20,7 @@ def main(gamename):
         windowstring = win32gui.GetWindowText(hwnd)
         if 'Stella' in windowstring:
             wincap = NewWindowCapture(windowstring)
-            wincap.change_processing(regularGrayscale)
+            wincap.change_processing(noFilter)
             myCounter = Counter()
             myCounter.start()
             while(True):
@@ -31,7 +31,7 @@ def main(gamename):
                 print(myCounter.countPerSec())
                 myCounter.increment()
 
-                if cv2.waitKey(1) == ord('q'):
+                if cv2.waitKey(2) == ord('q'):
                     cv2.destroyAllWindows()
                     break
 

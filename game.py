@@ -20,4 +20,16 @@ class SpaceInvaders:
         
     def initialSetup():
         pass
-        
+
+class Enemy:
+
+    Xdirection = ''
+    Ydirection = ''
+    MovementSpeed = 0
+
+    def __init__(self):
+        pass
+
+    
+    def defineMovement():
+        pass
