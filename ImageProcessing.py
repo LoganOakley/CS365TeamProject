@@ -30,16 +30,16 @@ def subtraction(img):
         contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
                 # BGR for contour color
-                cv2.drawContours(img_copy, [cnt], -1, (255, 0, 0), 1)
-        return img_copy
+                cv2.drawContours(processed_img, [cnt], -1, (255, 0, 0), 1)
+        return processed_img
 
 def noFilter(img):
         img = np.ascontiguousarray(img)
-        edges = cv2.Canny(img, 10, 100)
-        contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        edges = cv2.Canny(img, 10, 200)
+        contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
                 area = cv2.contourArea(cnt)
                 
-                if area < 100:
+                if area < 200:
                         cv2.drawContours(img, [cnt], -1, (255, 0, 255), 1)
         return img

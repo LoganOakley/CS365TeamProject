@@ -86,16 +86,8 @@ def romList():
         config.set('SETTINGS', 'romdirectory', romfolder)
         with open('config/config.ini', 'w') as configfile:
             config.write(configfile)
-        romList()
-        try:
-            roms = romSearch(config['SETTINGS']['ROMDirectory'])
-            l.config(height=len(roms))
-            i = 0
-            while i < len(roms):
-                l.insert(i, roms[i])
-                i += 1
-        except:
-            romList()
+        return romList()
+        
     return l
 
 programSearch()
