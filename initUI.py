@@ -99,7 +99,7 @@ lb.pack(side=LEFT)
 
 
 def playButton(listbox):
-    p = None;
+    p = None
     config = configparser.ConfigParser(allow_no_value=True)
     config.read('config/config.ini')
 

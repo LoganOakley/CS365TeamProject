@@ -14,7 +14,7 @@ from game import *
 
 def main(gamename = 'No Name'):
 
-    game = gamename;
+    game = gamename
 
     def FindWindowEnum(hwnd, ctx):
         windowstring = win32gui.GetWindowText(hwnd)

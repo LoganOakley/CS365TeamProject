@@ -1,27 +1,43 @@
-from DirectKeyInputs import ReleaseKey, PressKey, LEFT, RIGHT, UP, DOWN, SPACE
+from configparser import Error
+
+from win32con import LC_INTERIORS
+from DirectKeyInputs import ReleaseKey, PressKey, LEFT, RIGHT, UP, DOWN, SPACE, F2
 import time
+import win32gui
 
-for i in range(2):
-    print(2-i)
-    time.sleep(i)
+def windowEnumerationHandler(hwnd, top_windows):
+    top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
 
+if __name__ == "__main__":
+    results = []
+    top_windows = []
+    win32gui.EnumWindows(windowEnumerationHandler, top_windows)
+
+    for i in top_windows:
+        if "stella" in i[1].lower():
+            print(i)
+            win32gui.ShowWindow(i[0],5)
+            win32gui.SetForegroundWindow(i[0])
+            break
+        
+
+    
+
+
+def quickTap(keyName):
+    PressKey(keyName)
+    time.sleep(.1)
+    ReleaseKey(keyName)
+    time.sleep(.1)
+
+quickTap(F2)
 print("up")
-PressKey(UP)
-time.sleep(.1)
-ReleaseKey(UP)
+quickTap(UP)
 print("down")
-PressKey(DOWN)
-time.sleep(.1)
-ReleaseKey(DOWN)
+quickTap(DOWN)
 print("left")
-PressKey(LEFT)
-time.sleep(.1)
-ReleaseKey(LEFT)
+quickTap(LEFT)
 print("right")
-PressKey(RIGHT)
-time.sleep(.1)
-ReleaseKey(RIGHT)
+quickTap(RIGHT)
 print('space')
-PressKey(SPACE)
-time.sleep(.1)
-ReleaseKey(SPACE)
+quickTap(SPACE)

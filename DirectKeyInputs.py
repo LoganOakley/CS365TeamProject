@@ -10,6 +10,8 @@ RIGHT = 0xCD
 UP = 0xC8 
 DOWN = 0xD0
 SPACE = 0x39
+F2 = 0x3C
+
 
 # C struct redefinitions 
 PUL = ctypes.POINTER(ctypes.c_ulong)
