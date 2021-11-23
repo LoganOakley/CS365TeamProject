@@ -20,7 +20,7 @@ def main(gamename = 'No Name'):
         windowstring = win32gui.GetWindowText(hwnd)
         if 'Stella' in windowstring:
             wincap = NewWindowCapture(windowstring)
-            wincap.change_processing(noFilter)
+            wincap.change_processing(regularGrayscale)
             myCounter = Counter()
             myCounter.start()
             while(True):

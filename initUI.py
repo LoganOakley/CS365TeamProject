@@ -68,25 +68,25 @@ def romList():
     l = Listbox(root)
     config = configparser.ConfigParser(allow_no_value=True)
     config.read('config/config.ini')
-    if config['SETTINGS']['romdirectory'] != '':
-        try:
-            roms = romSearch(config['SETTINGS']['ROMDirectory'])
-            l.config(height=len(roms))
-            i = 0
-            while i < len(roms):
-                l.insert(i, roms[i])
-                i += 1
-        except:
-            config.set('SETTINGS', 'romdirectory', '')
+    while(TRUE):
+        if config['SETTINGS']['romdirectory'] != '':
+            try:
+                roms = romSearch(config['SETTINGS']['ROMDirectory'])
+                l.config(height=len(roms))
+                i = 0
+                while i < len(roms):
+                    l.insert(i, roms[i])
+                    i += 1
+                break
+            except:
+                config.set('SETTINGS', 'romdirectory', '')
+                with open('config/config.ini', 'w') as configfile:
+                    config.write(configfile)
+        else:
+            romfolder = filedialog.askdirectory(title='Please Select a ROM folder')
+            config.set('SETTINGS', 'romdirectory', romfolder)
             with open('config/config.ini', 'w') as configfile:
                 config.write(configfile)
-            romList()
-    else:
-        romfolder = filedialog.askdirectory(title='Please Select a ROM folder')
-        config.set('SETTINGS', 'romdirectory', romfolder)
-        with open('config/config.ini', 'w') as configfile:
-            config.write(configfile)
-        return romList()
         
     return l
 
