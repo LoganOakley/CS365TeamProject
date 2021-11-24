@@ -1,4 +1,12 @@
-import cv2, pyautogui, numpy as np 
+import cv2, pyautogui, numpy as np, os
+
+#def generate_neg_file():
+ #   with open('neg.txt', 'w') as f:
+  #      for filename in os.listdir('resources/CascadeClassifier/Centipede/Negative'):
+   #         f.write('resources/CascadeClassifier/Negative/' + filename + '\n')
+
+generate_neg_file()            
+    
 
 game = cv2.imread('screenshot2.png', cv2.IMREAD_UNCHANGED)
 en1 = cv2.imread('enemy1.png', cv2.IMREAD_UNCHANGED)

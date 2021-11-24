@@ -20,20 +20,25 @@ def main(gamename = 'No Name'):
         windowstring = win32gui.GetWindowText(hwnd)
         if 'Stella' in windowstring:
             wincap = NewWindowCapture(windowstring)
-            wincap.change_processing(regularGrayscale)
+            wincap.change_processing(noFilter)
             myCounter = Counter()
             myCounter.start()
             while(True):
                 screenshot = wincap.grab_screenshot()
                 
                 cv2.imshow('Computer Vision', screenshot)
-
-                print(myCounter.countPerSec())
+                count = myCounter.countPerSec()
+                print(count)
                 myCounter.increment()
-
-                if cv2.waitKey(2) == ord('q'):
+                key = cv2.waitKey(3)
+                if key == ord('q'):
                     cv2.destroyAllWindows()
                     break
+                #for purposes of positive cascade images
+                #elif key == ord('f'):
+                  #  cv2.imwrite(f'resources/CascadeClassifier/Centipede/Positive/{str(count)}.jpg', screenshot)
+                   # print('Hello')
+                    
 
             print('Finished')
 
