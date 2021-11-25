@@ -5,7 +5,7 @@ import cv2, pyautogui, numpy as np, os
   #      for filename in os.listdir('resources/CascadeClassifier/Centipede/Negative'):
    #         f.write('resources/CascadeClassifier/Negative/' + filename + '\n')
 
-generate_neg_file()            
+#generate_neg_file()            
     
 
 game = cv2.imread('resources/MatchTemplateImages/screenshot 2.PNG', cv2.COLOR_BGR2GRAY)
