@@ -35,11 +35,11 @@ def subtraction(img):
 
 def noFilter(img):
         img = np.ascontiguousarray(img)
-        edges = cv2.Canny(img, 10, 200)
-        contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        for cnt in contours:
-                area = cv2.contourArea(cnt)
-                
-                if area < 200:
-                        cv2.drawContours(img, [cnt], -1, (255, 0, 255), 1)
+        #edges = cv2.Canny(img, 10, 200)
+        #contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        #for cnt in contours:
+         #       area = cv2.contourArea(cnt)
+          #      
+           #     if area < 200:
+            #            cv2.drawContours(img, [cnt], -1, (255, 0, 255), 1)
         return img
