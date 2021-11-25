@@ -8,7 +8,8 @@ import time
 import win32gui
 import win32ui
 import win32con  # pip install pywin32
-import ctypes  # allows GetSystemMetrics
+import ctypes
+from Tracking import drawBoxes, drawBoxesAKAZE  
 from game import *
 
 
@@ -23,13 +24,18 @@ def main(gamename = 'No Name'):
             wincap.change_processing(noFilter)
             myCounter = Counter()
             myCounter.start()
+            en1 = cv2.imread('resources/MatchTemplateImages/enemy1.png', cv2.COLOR_BGR2GRAY)
+            en2 = cv2.imread('resources/MatchTemplateImages/enemy2.png', cv2.COLOR_BGR2GRAY)
+            spider = cv2.imread('resources/MatchTemplateImages/spider.png', cv2.COLOR_BGR2GRAY)
+            
             while(True):
                 screenshot = wincap.grab_screenshot()
-                
+                screenshot = drawBoxes(screenshot,spider)
                 cv2.imshow('Computer Vision', screenshot)
                 count = myCounter.countPerSec()
                 print(count)
                 myCounter.increment()
+                
                 key = cv2.waitKey(3)
                 if key == ord('q'):
                     cv2.destroyAllWindows()
