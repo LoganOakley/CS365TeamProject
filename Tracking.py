@@ -7,7 +7,7 @@ def drawBoxes(image,template):
     result = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_index, max_index = cv2.minMaxLoc(result)
 
-    threshold = .5
+    threshold = .6
     if max_val >= threshold:
 
 
