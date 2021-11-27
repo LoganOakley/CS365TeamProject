@@ -9,8 +9,9 @@ import win32gui
 import win32ui
 import win32con  # pip install pywin32
 import ctypes
-from Tracking import drawBoxes, drawBoxesAKAZE  
+from Tracking import drawBoxes
 from game import *
+
 
 
 def main(gamename = 'No Name'):
