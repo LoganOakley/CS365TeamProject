@@ -7,8 +7,8 @@ import win32gui
 
 def windowEnumerationHandler(hwnd, top_windows):
     top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
-
-if __name__ == "__main__":
+def bringToFront():
+    
     results = []
     top_windows = []
     win32gui.EnumWindows(windowEnumerationHandler, top_windows)
@@ -19,25 +19,39 @@ if __name__ == "__main__":
             win32gui.ShowWindow(i[0],5)
             win32gui.SetForegroundWindow(i[0])
             break
-        
 
+def Start():
+    PressKey(F2)
+    time.sleep(.1)
+    ReleaseKey(F2)
+def GoUp():
+    PressKey(UP)
+    ReleaseKey(DOWN)
+    ReleaseKey(LEFT)
+    ReleaseKey(RIGHT)
+
+def GoDown():
+    PressKey(DOWN)
+    ReleaseKey(UP)
+    ReleaseKey(LEFT)
+    ReleaseKey(RIGHT)
+    
+def GoLeft():
+    PressKey(LEFT)
+    ReleaseKey(DOWN)
+    ReleaseKey(UP)
+    ReleaseKey(RIGHT)
+    
+def GoRight():
+    PressKey(RIGHT)
+    ReleaseKey(DOWN)
+    ReleaseKey(UP)
+    ReleaseKey(RIGHT)
+
+def Shoot():
+    PressKey(SPACE)
+    time.sleep(.01)
+    ReleaseKey(SPACE)
     
 
 
-def quickTap(keyName):
-    PressKey(keyName)
-    time.sleep(.1)
-    ReleaseKey(keyName)
-    time.sleep(.1)
-
-quickTap(F2)
-print("up")
-quickTap(UP)
-print("down")
-quickTap(DOWN)
-print("left")
-quickTap(LEFT)
-print("right")
-quickTap(RIGHT)
-print('space')
-quickTap(SPACE)

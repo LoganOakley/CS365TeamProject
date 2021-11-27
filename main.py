@@ -1,3 +1,4 @@
+from Controller import GoLeft, Shoot, Start, bringToFront
 from ScreenReader import NewWindowCapture, Counter
 import numpy as np
 from ImageProcessing import *
@@ -11,8 +12,7 @@ import win32con  # pip install pywin32
 import ctypes
 from Tracking import drawBoxes
 from game import *
-
-
+from threading import Thread
 
 def main(gamename = 'No Name'):
 
@@ -21,6 +21,7 @@ def main(gamename = 'No Name'):
     def FindWindowEnum(hwnd, ctx):
         windowstring = win32gui.GetWindowText(hwnd)
         if 'Stella' in windowstring:
+            bringToFront()
             wincap = NewWindowCapture(windowstring)
             wincap.change_processing(noFilter)
             myCounter = Counter()
@@ -28,7 +29,7 @@ def main(gamename = 'No Name'):
             en1 = cv2.imread('resources/MatchTemplateImages/enemy1.png', cv2.COLOR_BGR2GRAY)
             en2 = cv2.imread('resources/MatchTemplateImages/enemy2.png', cv2.COLOR_BGR2GRAY)
             spider = cv2.imread('resources/MatchTemplateImages/spider.png', cv2.COLOR_BGR2GRAY)
-            
+            Start()
             while(True):
                 screenshot = wincap.grab_screenshot()
                 screenshot = drawBoxes(screenshot,spider)
@@ -37,6 +38,8 @@ def main(gamename = 'No Name'):
                 print(count)
                 myCounter.increment()
                 
+                GoLeft()
+                Shoot()
                 key = cv2.waitKey(3)
                 if key == ord('q'):
                     cv2.destroyAllWindows()
