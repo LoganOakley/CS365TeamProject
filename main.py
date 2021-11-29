@@ -28,12 +28,14 @@ def main(gamename = 'No Name'):
             myCounter.start()
             en1 = cv2.imread('resources/MatchTemplateImages/enemy1.png', cv2.COLOR_BGR2GRAY)
             en2 = cv2.imread('resources/MatchTemplateImages/enemy2.png', cv2.COLOR_BGR2GRAY)
-            spider = cv2.imread('resources/MatchTemplateImages/spider.png', cv2.COLOR_BGR2GRAY)
+            player = cv2.imread('resources/MatchTemplateImages/playerSprite.png', cv2.COLOR_BGR2GRAY)
+            
             Start()
             while(True):
                 screenshot = wincap.grab_screenshot()
-                screenshot = drawBoxes(screenshot,spider)
-                cv2.imshow('Computer Vision', screenshot)
+                ROI = screenshot[0:410,0:600]
+                view = drawBoxes(ROI,player)
+                cv2.imshow('Computer Vision', view)
                 count = myCounter.countPerSec()
                 print(count)
                 myCounter.increment()
