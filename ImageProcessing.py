@@ -18,19 +18,12 @@ def filterPurple(img):
 def regularGrayscale(img):
         processed_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         edges = cv2.Canny(processed_img, 10, 100)
-        contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        for cnt in contours:
-                cv2.drawContours(processed_img, [cnt], -1, (255, 255, 0), 1)
         return processed_img
 
 def subtraction(img):
         subtract = cv2.createBackgroundSubtractorMOG2()
         processed_img = subtract.apply(img)
         edges = cv2.Canny(processed_img, 10, 100)
-        contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        for cnt in contours:
-                # BGR for contour color
-                cv2.drawContours(processed_img, [cnt], -1, (255, 0, 0), 1)
         return processed_img
 
 def noFilter(img):

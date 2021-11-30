@@ -9,6 +9,7 @@ from subprocess import *
 import time
 from threading import Thread
 from ImageProcessing import *
+import math
 
 # setting tkinter main window size
 winwidth = 500
@@ -46,7 +47,7 @@ def programSearch():
             config.write(configfile)
         programSearch()
 
-
+              
 
 
     
@@ -130,7 +131,7 @@ def playButton(listbox):
 
 
     #global mainmethodProcess
-    #mainmethodProcess = Process(target=main.main())
+    #mainmethodProcess = Process(target=main.main()                                                                )
     #mainmethodProcess.start()
 
     time.sleep(3)

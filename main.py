@@ -13,6 +13,7 @@ import ctypes
 from Tracking import drawBoxes
 from game import *
 from threading import Thread
+import math
 
 def main(gamename = 'No Name'):
 
@@ -33,9 +34,19 @@ def main(gamename = 'No Name'):
             Start()
             while(True):
                 screenshot = wincap.grab_screenshot()
-                ROI = screenshot[0:410,0:600]
-                view = drawBoxes(ROI,player)
-                cv2.imshow('Computer Vision', view)
+                ROI = screenshot[0:math.ceil(wincap.height * .85), math.ceil(wincap.width * .08):math.ceil(wincap.width*.92)]
+                #ROI = screenshot[0:410,0:600] Quaid Note, this incorrectly sizes my stella window
+                view = drawBoxes(ROI,player,'player')
+                view = view + drawBoxes(ROI, en1, 'enemy')
+                view = view + drawBoxes(ROI, en2, 'enemy') 
+                
+                for v in view:
+                    if v.name == 'player':
+                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(255,0,0), thickness=2, lineType=cv2.LINE_4)
+                    if v.name == 'enemy':
+                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,0,255), thickness=2, lineType=cv2.LINE_4)
+                    
+                cv2.imshow('Computer Vision', ROI)
                 count = myCounter.countPerSec()
                 print(count)
                 myCounter.increment()
