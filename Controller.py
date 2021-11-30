@@ -46,8 +46,13 @@ def GoRight():
     PressKey(RIGHT)
     ReleaseKey(DOWN)
     ReleaseKey(UP)
-    ReleaseKey(RIGHT)
+    ReleaseKey(LEFT)
 
+def Stop():
+    ReleaseKey(RIGHT)
+    ReleaseKey(DOWN)
+    ReleaseKey(UP)
+    ReleaseKey(LEFT)
 def Shoot():
     PressKey(SPACE)
     time.sleep(.01)
