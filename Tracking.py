@@ -15,17 +15,14 @@ class GameObjects:
     
     
 
-def drawBoxes(image,template,name = ''):
+def getLocations(image,template,name = '',thresh=.8):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     result = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
     w, h = template.shape[::-1]
     #min_val, max_val, min_index, max_index = cv2.minMaxLoc(result)
     gameObjects = []
-    
-
-    threshold = .6
-    loc = np.where(result >= threshold)
+    loc = np.where(result >= thresh)
     for p in zip(*loc[::-1]):
         gameObjects.append(GameObjects(p, (p[0] + w, p[1] + h), name))
     #if max_val >= threshold:

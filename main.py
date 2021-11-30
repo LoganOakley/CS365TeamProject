@@ -10,7 +10,7 @@ import win32gui
 import win32ui
 import win32con  # pip install pywin32
 import ctypes
-from Tracking import drawBoxes
+from Tracking import *
 from game import *
 from threading import Thread
 import math
@@ -27,25 +27,27 @@ def main(gamename = 'No Name'):
             wincap.change_processing(noFilter)
             myCounter = Counter()
             myCounter.start()
-            en1 = cv2.imread('resources/MatchTemplateImages/enemy1.png', cv2.COLOR_BGR2GRAY)
-            en2 = cv2.imread('resources/MatchTemplateImages/enemy2.png', cv2.COLOR_BGR2GRAY)
-            player = cv2.imread('resources/MatchTemplateImages/playerSprite.png', cv2.COLOR_BGR2GRAY)
+            spider = cv2.imread('resources/MatchTemplateImages/spider1.png')
+            enMiddle = cv2.imread('resources/MatchTemplateImages/enemyMiddle.png')
+            player = cv2.imread('resources/MatchTemplateImages/PlayerSprite.png')
             
             Start()
             while(True):
                 screenshot = wincap.grab_screenshot()
                 ROI = screenshot[0:math.ceil(wincap.height * .85), math.ceil(wincap.width * .08):math.ceil(wincap.width*.92)]
                 #ROI = screenshot[0:410,0:600] Quaid Note, this incorrectly sizes my stella window
-                view = drawBoxes(ROI,player,'player')
-                view = view + drawBoxes(ROI, en1, 'enemy')
-                view = view + drawBoxes(ROI, en2, 'enemy') 
+                view = getLocations(ROI,player,'player')
+                view = view + getLocations(ROI, enMiddle, 'enemy')
+                view = view + getLocations(ROI, spider, 'spider', .75)
+                #view = view + drawBoxes(ROI, en2, 'enemy') 
                 
                 for v in view:
                     if v.name == 'player':
-                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(255,0,0), thickness=2, lineType=cv2.LINE_4)
+                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(255,0,0), thickness=1, lineType=cv2.LINE_4)
                     if v.name == 'enemy':
-                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,0,255), thickness=2, lineType=cv2.LINE_4)
-                    
+                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,0,255), thickness=1, lineType=cv2.LINE_4)
+                    if v.name == 'spider':
+                       cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,100,255), thickness=1, lineType=cv2.LINE_4) 
                 cv2.imshow('Computer Vision', ROI)
                 count = myCounter.countPerSec()
                 print(count)
