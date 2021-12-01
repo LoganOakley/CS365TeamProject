@@ -31,10 +31,10 @@ def main(gamename = 'No Name'):
             enMiddle = cv2.imread('resources/MatchTemplateImages/enemyMiddle.png')
             player = cv2.imread('resources/MatchTemplateImages/PlayerSprite.png')
             playerloc = [600,600]
-            spiderloc =[600,600]
+            spiderloc =[0,0]
             Start()
             while(True):
-                Stop()
+                #Stop()
                 screenshot = wincap.grab_screenshot()
                 ROI = screenshot[0:math.ceil(wincap.height * .85), math.ceil(wincap.width * .08):math.ceil(wincap.width*.92)]
                 #ROI = screenshot[0:410,0:600] Quaid Note, this incorrectly sizes my stella window
@@ -42,7 +42,7 @@ def main(gamename = 'No Name'):
                 #view = view + getLocations(ROI, enMiddle, 'enemy')
                 view = view + getLocations(ROI, spider, 'spider', .6)
                 #view = view + drawBoxes(ROI, en2, 'enemy') 
-                
+                spiderloc = [0,0] #clear location so if there is no spider it doesnt remember the old location
                 for v in view:
                     if v.name == 'player':
                         playerloc = v.topLeft
@@ -53,10 +53,14 @@ def main(gamename = 'No Name'):
                        spiderloc = v.topLeft
                 print(" player:"+str(playerloc[0])+","+str(playerloc[1])+" spider:"+str(spiderloc[0])+","+str(spiderloc[0])+" Distance:"+str(distance(playerloc,spiderloc)))
                 if distance(playerloc,spiderloc) < 100:
-                    if playerloc[0]-spiderloc[0]>0:
+                    if playerloc[0]-spiderloc[0]>20:
                         GoRight()
-                    else:
+                    elif playerloc[0]-spiderloc[0]<-20:
                         GoLeft()
+                    else:
+                        Shoot()
+                else:
+                    Stop()
                 cv2.imshow('Computer Vision', ROI)
                 count = myCounter.countPerSec()
                 #print(count)
