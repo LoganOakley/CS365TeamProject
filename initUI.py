@@ -95,7 +95,6 @@ programSearch()
 # create ROM list box
 lb = romList()
 lb.pack(side=LEFT)
-
 # button logic
 
 

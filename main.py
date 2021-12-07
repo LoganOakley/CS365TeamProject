@@ -1,4 +1,4 @@
-from Controller import GoLeft, GoRight, Shoot, Start, Stop, bringToFront
+from Controller import GoLeft, GoRight, Shoot, Start, Stop, bringToFront, DetermineActions, distance
 from ScreenReader import NewWindowCapture, Counter
 import numpy as np
 from ImageProcessing import *
@@ -28,7 +28,10 @@ def main(gamename = 'No Name'):
             myCounter = Counter()
             myCounter.start()
             spider = cv2.imread('resources/MatchTemplateImages/spider1.png')
+            spider2 = cv2.imread('resources/MatchTemplateImages/spider.png')
             enMiddle = cv2.imread('resources/MatchTemplateImages/enemyMiddle.png')
+            enEnd = cv2.imread('resources/MatchTemplateImages/enemyEnd.png')
+            enEnd2 = cv2.imread('resources/MatchTemplateImages/enemyEnd2.png')
             player = cv2.imread('resources/MatchTemplateImages/PlayerSprite.png')
             playerloc = [600,600]
             spiderloc =[0,0]
@@ -38,37 +41,42 @@ def main(gamename = 'No Name'):
                 screenshot = wincap.grab_screenshot()
                 ROI = screenshot[0:math.ceil(wincap.height * .85), math.ceil(wincap.width * .08):math.ceil(wincap.width*.92)]
                 #ROI = screenshot[0:410,0:600] Quaid Note, this incorrectly sizes my stella window
-                view = getLocations(ROI,player,'player',.666666)
-                #view = view + getLocations(ROI, enMiddle, 'enemy')
-                view = view + getLocations(ROI, spider, 'spider', .6)
+                view = getLocations(ROI,player,'player',.8)
+                view += getLocations(ROI, enMiddle, 'enemy', .8)
+                #view += getLocations(ROI, enEnd, 'enemy', .9)
+                #view += getLocations(ROI, enEnd2, 'enemy', .9)
+                view += getLocations(ROI, spider, 'spider', .9)
+                #view += getLocations(ROI, spider2, 'spider', .9)
                 #view = view + drawBoxes(ROI, en2, 'enemy') 
                 spiderloc = [0,0] #clear location so if there is no spider it doesnt remember the old location
+                enemyList = []
                 for v in view:
                     if v.name == 'player':
-                        playerloc = v.topLeft
+                        playerloc = [(v.topLeft[0] + v.bottomRight[0]) / 2, v.topLeft[1]]
+                        print(f"{playerloc[0]}")
                         cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,0,255), thickness=1, lineType=cv2.LINE_4)
                     if v.name == 'enemy':
-                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,0,255), thickness=1, lineType=cv2.LINE_4)
+                        v.position = 'above' if v.bottomRight[1] < playerloc[1] else 'below'
+                        enemyList.append(v)
+                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(255,0,255), thickness=1, lineType=cv2.LINE_4)
                     if v.name == 'spider':
-                       spiderloc = v.topLeft
-                print(" player:"+str(playerloc[0])+","+str(playerloc[1])+" spider:"+str(spiderloc[0])+","+str(spiderloc[0])+" Distance:"+str(distance(playerloc,spiderloc)))
-                if distance(playerloc,spiderloc) < 100:
-                    if playerloc[0]-spiderloc[0]>20:
-                        GoRight()
-                    elif playerloc[0]-spiderloc[0]<-20:
-                        GoLeft()
-                    else:
-                        Shoot()
-                else:
-                    Stop()
+                        v.position = 'above' if v.bottomRight[1] < playerloc[1] else 'below'
+                        enemyList.append(v)
+                        cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,255,255), thickness=1, lineType=cv2.LINE_4)
+                        spiderloc = v.topLeft
+                #print(" player:"+str(playerloc[0])+","+str(playerloc[1])+" spider:"+str(spiderloc[0])+","+str(spiderloc[0])+" Distance:"+str(distance(playerloc,spiderloc)))
+                
+                t1 = Thread(DetermineActions(playerloc, enemyList))
+                t1.start()
+                
                 cv2.imshow('Computer Vision', ROI)
                 count = myCounter.countPerSec()
-                #print(count)
+                print(count)
                 myCounter.increment()
                 
                 #GoLeft()
                 #Shoot()
-                key = cv2.waitKey(3)
+                key = cv2.waitKey(1)
                 if key == ord('q'):
                     cv2.destroyAllWindows()
                     break
@@ -83,7 +91,4 @@ def main(gamename = 'No Name'):
     findwindow = win32gui.EnumWindows(FindWindowEnum, None)
     # Goes through all windows and does the loop when the window name contains our chosen string
 
-def distance(loc1,loc2):
-    return math.sqrt((loc1[0]-loc2[0])**2+(loc1[1]-loc2[1])**2)
-if __name__ == "__main__":
-    main()
+
