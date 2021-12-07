@@ -6,6 +6,7 @@ import time
 import win32gui
 import math
 from threading import Thread
+from Tracking import GameObjects
 
 def windowEnumerationHandler(hwnd, top_windows):
     top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
@@ -61,7 +62,7 @@ def Shoot():
     ReleaseKey(SPACE)
     
     
-def DetermineActions(player, enemyLocations):
+def DetermineActions(player, enemyLocations, spiderObject = None):
     down = False
     up = False
     right = False
@@ -72,27 +73,41 @@ def DetermineActions(player, enemyLocations):
     enemyBelow = False
     closestEnemyDistance = 999.99
     closestEnemyX = 0
+    emergencyDodge = False
+    #if (spiderObject != None and spiderObject.position == 'above'):
+        #print("spider above")
     for l in enemyLocations:
         
         
         if(l.name == "enemy" or l.name == "spider"):  
             enemyDistance = distance(l.topLeft, player)
+            
             if(l.position == 'above'):
                 if (l.bottomRight[1] + 20 > player[1] and (l.bottomRight[0] - 40 < player[0] and l.bottomRight[0] + 40 > player[0])):
                     enemyAbove = True
-                if (l.topLeft[0] - player[0] < 20 or player[0] - l.topLeft[0] < 20):    #shoot logic
-                    Shoot()
+                if (l.topLeft[0] > player[0]): #shoot logic
+                
+                    if (l.topLeft[0] - player[0] < 20):
+                        Shoot()
+                    
+                else:
+                    if (player[0] - l.topLeft[0] < 20):
+                        Shoot()
             else:
                 if ((l.bottomRight[1] - 20 < player[1] and l.bottomRight[1] + 20 > player[1])and (l.bottomRight[0] - 40 < player[0] and l.bottomRight[0] + 40 > player[0])):
                     enemyBelow = True
                 
             #if(l.topleft[0] - 30 < player[0] and l.topLeft + 30 > player[0]):
             if (enemyDistance < closestEnemyDistance):
+                #print(f'{enemyDistance}')
                 closestEnemyDistance = enemyDistance
                 closestEnemyX = l.bottomRight[0] - 10
-                print(f"new enemy distance: {closestEnemyDistance}")
-                if ((l.bottomRight[1] > player[1] - 40 and l.bottomRight[1] < player[1] + 40)):
-                    print("made it to actions")
+                #print(f"new enemy distance: {closestEnemyDistance}")
+                if ((l.bottomRight[1] > player[1] - 20 and l.bottomRight[1] < player[1] + 20)):
+                    if (enemyDistance < 15):
+                        print("emergency dodge activated!")
+                        emergencyDodge = True
+                    #print("made it to actions")
                     if(l.bottomRight[0] < player[0]):
                         right = True
                         left = False
@@ -109,14 +124,22 @@ def DetermineActions(player, enemyLocations):
                         down = True
                         up = False
                         #GoDown()
-                elif (player[0] < closestEnemyX + 20 and player[0] > closestEnemyX - 20):
+                elif ((player[0] < closestEnemyX + 20 and player[0] > closestEnemyX - 20)):
+                    print("stopped")
                     stop = True
-                elif (player[0] < closestEnemyX):
-                    right = True
-                    left = False
-                elif (player[0] > closestEnemyX):
-                    left = True
-                    right = False
+                elif (spiderObject != None):
+                    if (player[0] < closestEnemyX): #or (player[0] > spiderObject.bottomRight[0] and player[0] - spiderObject.bottomRight[0] < 20 and spiderObject.position == 'below')):
+                        print("chasing right")
+                        right = True
+                        left = False
+                    elif (player[0] > closestEnemyX): # or (player[0] < spiderObject.bottomRight[0] and spiderObject.bottomRight[0] - player[0] < 20 and spiderObject.position == 'below')):
+                        print("chasing left")
+                        left = True
+                        right = False
+                elif (player[1] < 485 and (closestEnemyX + 30 < player[0] or closestEnemyX - 30 > player[0])):
+                    print("did downward dodge")
+                    down = True
+                    up = False
                 else:
                     stop = True
                     
@@ -133,19 +156,37 @@ def DetermineActions(player, enemyLocations):
     
     if (shoot == True):
         Shoot()
-    
-    if (stop):
-        Stop()
-    else:
-        if (up):
-            GoUp()
-        elif(down):
+    if (emergencyDodge == True):
+        if (player[1] < 485):
+            if (closestEnemyX > player[0]):
+                GoLeft()
+            else:
+                GoRight()
             GoDown()
-        
-        if (right):
-            GoRight()
-        elif (left):
-            GoLeft()
+        elif(player[1] > 555):
+            if (closestEnemyX > player[0]):
+                GoLeft()
+            else:
+                GoRight()
+            GoUp()
+        else:
+            if (closestEnemyX > player[0]):
+                GoLeft()
+            else:
+                GoRight()
+    else: 
+        if (stop):
+            Stop()
+        else:
+            if (up):
+                GoUp()
+            elif(down):
+                GoDown()
+            
+            if (right):
+                GoRight()
+            elif (left):
+                GoLeft()
 
 
             

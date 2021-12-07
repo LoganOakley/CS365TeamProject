@@ -12,8 +12,8 @@ from ImageProcessing import *
 import math
 
 # setting tkinter main window size
-winwidth = 500
-winheight = 450
+winwidth = 300
+winheight = 200
 user = ctypes.windll.user32
 # SETTING
 # GetSystemMetrics grabs the screen size, set winwidth and winheight to the window size you'd like, w and h return the right x and y locations for the window

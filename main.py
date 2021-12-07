@@ -48,12 +48,12 @@ def main(gamename = 'No Name'):
                 view += getLocations(ROI, spider, 'spider', .9)
                 #view += getLocations(ROI, spider2, 'spider', .9)
                 #view = view + drawBoxes(ROI, en2, 'enemy') 
-                spiderloc = [0,0] #clear location so if there is no spider it doesnt remember the old location
+                spiderobj = None
                 enemyList = []
                 for v in view:
                     if v.name == 'player':
                         playerloc = [(v.topLeft[0] + v.bottomRight[0]) / 2, v.topLeft[1]]
-                        print(f"{playerloc[0]}")
+                        #print(f"{playerloc[0]}")
                         cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,0,255), thickness=1, lineType=cv2.LINE_4)
                     if v.name == 'enemy':
                         v.position = 'above' if v.bottomRight[1] < playerloc[1] else 'below'
@@ -63,15 +63,15 @@ def main(gamename = 'No Name'):
                         v.position = 'above' if v.bottomRight[1] < playerloc[1] else 'below'
                         enemyList.append(v)
                         cv2.rectangle(ROI, v.topLeft, v.bottomRight, color=(0,255,255), thickness=1, lineType=cv2.LINE_4)
-                        spiderloc = v.topLeft
+                        spiderobj = v
                 #print(" player:"+str(playerloc[0])+","+str(playerloc[1])+" spider:"+str(spiderloc[0])+","+str(spiderloc[0])+" Distance:"+str(distance(playerloc,spiderloc)))
                 
-                t1 = Thread(DetermineActions(playerloc, enemyList))
+                t1 = Thread(DetermineActions(playerloc, enemyList, spiderobj))
                 t1.start()
                 
                 cv2.imshow('Computer Vision', ROI)
                 count = myCounter.countPerSec()
-                print(count)
+                #print(count)
                 myCounter.increment()
                 
                 #GoLeft()
